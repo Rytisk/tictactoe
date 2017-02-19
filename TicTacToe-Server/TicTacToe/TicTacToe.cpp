@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "Server.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -21,6 +22,20 @@
 
 using namespace std;
 
+int main()
+{
+	Server *server = new Server(8001);
+	server->DoStuff();
+	server->CreateSocket();
+	server->SetServerAddress();
+	server->BindSocket();
+	server->Listen();
+	server->Start();
+
+	return 0;
+}
+
+/*
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
 	WSADATA data;
@@ -58,24 +73,24 @@ int main(int argc, char *argv[]) {
 	WSAStartup(MAKEWORD(2, 2), &data);
 #endif
 
-	/*
-	* Sukuriamas serverio socket'as
-	*/
+	
+	// Sukuriamas serverio socket'as
+	
 	if ((l_socket = socket(AF_INET, SOCK_STREAM, 0))< 0) {
 		fprintf(stderr, "ERROR #2: cannot create listening socket.\n");
 		exit(1);
 	}
 
-	/*
-	* Iðvaloma ir uþpildoma serverio adreso struktûra
-	*/
+	
+	// Iðvaloma ir uþpildoma serverio adreso struktûra
+	
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET; // nurodomas protokolas (IP)
 
-								   /*
-								   * Nurodomas IP adresas, kuriuo bus laukiama klientø, ðiuo atveju visi
-								   * esami sistemos IP adresai (visi interfeis'ai)
-								   */
+								   
+								   // Nurodomas IP adresas, kuriuo bus laukiama klientø, ðiuo atveju visi
+								   // esami sistemos IP adresai (visi interfeis'ai)
+								  
 	//servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
@@ -83,35 +98,35 @@ int main(int argc, char *argv[]) {
 
 	servaddr.sin_port = htons(port); // nurodomas portas
 
-									 /*
-									 * Serverio adresas susiejamas su socket'u
-									 */
+									 
+									 // Serverio adresas susiejamas su socket'u
+									 
 	if (bind(l_socket, (struct sockaddr *)&servaddr, sizeof(servaddr))<0) {
 		fprintf(stderr, "ERROR #3: bind listening socket.\n");
 		exit(1);
 	}
 
-	/*
-	* Nurodoma, kad socket'u l_socket bus laukiama klientø prisijungimo,
-	* eilëje ne daugiau kaip 5 aptarnavimo laukiantys klientai
-	*/
+	
+	//Nurodoma, kad socket'u l_socket bus laukiama klientø prisijungimo,
+	//eilëje ne daugiau kaip 5 aptarnavimo laukiantys klientai
+	
 	if (listen(l_socket, 5) <0) {
 		fprintf(stderr, "ERROR #4: error in listen().\n");
 		exit(1);
 	}
 
 	for (;;) {
-		/*
-		* Iðvalomas buferis ir kliento adreso struktûra
-		*/
+		
+		//Iðvalomas buferis ir kliento adreso struktûra
+		
 		memset(&clientaddr, 0, sizeof(clientaddr));
 		memset(&buffer, 0, sizeof(buffer));
 
 
 		cout << "Laukiam prisijungimo"  << endl;
-		/*
-		* Laukiama klientø prisijungimø
-		*/
+		
+		//Laukiama klientø prisijungimø
+		
 		clientaddrlen = sizeof(struct sockaddr);
 		if ((c_socket = accept(l_socket,
 			(struct sockaddr*)&clientaddr, &clientaddrlen))<0) {
@@ -119,14 +134,14 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 		cout << "Prisijunge" << endl;
-		/*
-		* Sulaukus kliento prisijungimo skaitomi kliento siunèiami duomenys
-		*/
+		
+		// Sulaukus kliento prisijungimo skaitomi kliento siunèiami duomenys
+		
 		s_len = recv(c_socket, buffer, sizeof(buffer), 0);
 
-		/*
-		* Klientui iðsiunèiami gauti duomenys
-		*/
+		
+		// Klientui iðsiunèiami gauti duomenys
+		
 
 		r_len = send(c_socket, buffer, s_len, 0);
 
@@ -135,9 +150,9 @@ int main(int argc, char *argv[]) {
 	//		s_len, r_len
 	//		);
 
-		/*
-		* Klientas atjungiamas
-		*/
+		
+		// Klientas atjungiamas
+		
 #ifdef _WIN32
 		closesocket(c_socket);
 #else
@@ -147,3 +162,4 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+*/

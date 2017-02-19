@@ -84,23 +84,25 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	printf("Enter the message: ");
-	fgets(buffer, BUFFLEN, stdin);
-	/*
-	* Iðsiunèiamas praneðimas serveriui
-	*/
-	send(s_socket, buffer, strlen(buffer), 0);
+	while (1) {
+		printf("Enter the message: ");
+		fgets(buffer, BUFFLEN, stdin);
+		/*
+		* Iðsiunèiamas praneðimas serveriui
+		*/
+		send(s_socket, buffer, strlen(buffer), 0);
 
-	memset(&buffer, 0, BUFFLEN);
-	/*
-	* Praneðimas gaunamas ið serverio
-	*/
-	recv(s_socket, buffer, BUFFLEN, 0);
-	printf("Server sent: %s\n", buffer);
+		memset(&buffer, 0, BUFFLEN);
+		/*
+		* Praneðimas gaunamas ið serverio
+		*/
+		recv(s_socket, buffer, BUFFLEN, 0);
+		printf("Server sent: %s\n", buffer);
 
-	/*
-	* Socket'as uþdaromas
-	*/
+		/*
+		* Socket'as uþdaromas
+		*/
+	}
 	std::cin.get();
 #ifdef _WIN32
 	closesocket(s_socket);
