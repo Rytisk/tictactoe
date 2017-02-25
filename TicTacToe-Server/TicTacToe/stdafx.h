@@ -10,6 +10,9 @@
 #include <stdio.h>
 #include <tchar.h>
 
+#include "Game.h"
+#include "Player.h"
+#include "Server.h"
 
 
 // TODO: reference additional headers your program requires here

@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <iostream>
 //#include <unistd.h>
 
@@ -43,8 +43,8 @@ int main()
 	game->Begin(server);*/
 
 	for (int i = 0; i < MAXCLIENTS; i++) {
-		server->clients[i] = new Player();
-		server->clients[i]->SetSocket(-1);
+		server->players[i] = new Player();
+		server->players[i]->SetSocket(-1);
 	}
 
 
@@ -57,13 +57,48 @@ int main()
 		//ir laukiam kol pasijungs antras vartotojas, tada jiem abiem nustatysim setOpponent() viena su kitu
 		//tada vienam nusius wait, kitam start
 
+		Player *player = NULL;
 
+		for (int i = 0; i < MAXCLIENTS; i++) {
+			if ((server->players[i]->GetSocket() != -1) && !server->players[i]->HasOpponent())
+			{
+				player = server->players[i];
+				break;
+			}
+		}
 
+		for (int i = 0; i < MAXCLIENTS; i++) {
+			if (player != NULL & (server->players[i]->GetSocket() != -1) && !server->players[i]->HasOpponent() && server->players[i] != player)
+			{
+				player->SetOpponent(server->players[i]);
+				server->players[i]->SetOpponent(player);
+				
+				Game *game = new Game();
+
+				player->SetGame(game);
+				server->players[i]->SetGame(game);
+				cout << "players have opponents now" << endl;
+				break;
+			}
+		}
+		
+		player = NULL;
 		//server->SendAndRecv();
 
 		server->Receive();
 
-		server->Send("Haha");
+
+	//	for (int i = 0; i < MAXCLIENTS; i++) {
+		//	if (server->players[i]->GetSocket() != -1 && server->players[i]->HasOpponent())
+		//	{
+				
+		server->Send("a");
+				//server->SendWithAddress(&server->players[i]->GetOpponent(), a);
+			
+			
+	//	}
+
+		
 
 	}
 
