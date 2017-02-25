@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 #include "Server.h"
+#include "Game.h"
+#include "Player.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -25,12 +27,49 @@ using namespace std;
 int main()
 {
 	Server *server = new Server(8001);
-	server->DoStuff();
-	server->CreateSocket();
-	server->SetServerAddress();
-	server->BindSocket();
-	server->Listen();
-	server->Start();
+	server->Init();
+
+	/*
+	Game *game = new Game();
+
+	Player *playerX = new Player();
+	Player *playerO = new Player();
+
+	playerX->SetOpponent(playerO);
+	playerO->SetOpponent(playerX);
+
+	game->SetCurrentPlayer(playerX);
+
+	game->Begin(server);*/
+
+	for (int i = 0; i < MAXCLIENTS; i++) {
+		server->clients[i] = new Player();
+		server->clients[i]->SetSocket(-1);
+	}
+
+
+	while(true)
+	{
+
+		server->GetConnections();
+
+		//Kai klientas prisijungia nusiunciam jam:WAIT
+		//ir laukiam kol pasijungs antras vartotojas, tada jiem abiem nustatysim setOpponent() viena su kitu
+		//tada vienam nusius wait, kitam start
+
+
+
+		//server->SendAndRecv();
+
+		server->Receive();
+
+		server->Send("Haha");
+
+	}
+
+	
+	 
+	
 
 	return 0;
 }

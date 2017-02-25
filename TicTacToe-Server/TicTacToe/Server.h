@@ -2,6 +2,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #define socklen_t int
+#define MAXCLIENTS 10
 #else
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -10,6 +11,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #endif
+#include "IClient.h"
 
 class Server {
 private:
@@ -17,12 +19,20 @@ private:
 	int l_socket;
 	struct sockaddr_in servaddr;
 	struct sockaddr_in clientaddr;
+	int c_sockets[MAXCLIENTS];
+	
+	fd_set read_set;
 public:
+	IClient *clients[MAXCLIENTS];
 	Server(unsigned int _port);
 	int DoStuff();
 	int CreateSocket();
 	void SetServerAddress();
 	int BindSocket();
 	int Listen();
-	void Start();
+	void Send(char buffer[]);
+	void Receive();
+	void Init();
+	void GetConnections();
+	void SendAndRecv();
 };
