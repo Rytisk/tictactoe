@@ -111,6 +111,7 @@ int Client::DoStuff()
 			write(s_socket, sendbuffer, i);
 		}
 	}*/
+		
 
 	    printf("Enter the message: ");
 	    fgets(buffer, BUFFLEN, stdin);

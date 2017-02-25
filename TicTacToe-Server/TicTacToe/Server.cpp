@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Server.h"
+#include "Player.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -24,11 +25,11 @@
 
 using namespace std;
 
-int findemptyuser(int c_sockets[])
+int findemptyuser(IClient *clients[])
 {
     int i;
     for (i = 0; i <  MAXCLIENTS; i++){
-        if (c_sockets[i] == -1){
+        if (clients[i]->GetSocket() == -1){
             return i;
         }
     }
@@ -75,73 +76,119 @@ int Server::Listen()
 	}
 }
 
-void Server::Start()
+void Server::GetConnections()
 {
 	socklen_t clientaddrlen;
-
-	int c_sockets[MAXCLIENTS];
-	fd_set read_set;
-
 	int maxfd = 0;
-	int i;
 
-	char buffer[BUFFLEN];
-	
-	for (i = 0; i < MAXCLIENTS; i++) {
-		c_sockets[i] = -1;
+	FD_ZERO(&read_set);
+	for (int i = 0; i < MAXCLIENTS; i++) {
+		if (clients[i]->GetSocket() != -1) {
+			FD_SET(clients[i]->GetSocket(), &read_set);
+			if (clients[i]->GetSocket() > maxfd) {
+				maxfd = clients[i]->GetSocket();
+			}
+		}
 	}
 
-	for (;;) {
-		FD_ZERO(&read_set);
-		for (i = 0; i < MAXCLIENTS; i++) {
-			if (c_sockets[i] != -1) {
-				FD_SET(c_sockets[i], &read_set);
-				if (c_sockets[i] > maxfd) {
-					maxfd = c_sockets[i];
-				}
-			}
+	FD_SET(l_socket, &read_set);
+	if (l_socket > maxfd) {
+		maxfd = l_socket;
+	}
+
+	select(maxfd + 1, &read_set, NULL, NULL, NULL);
+
+	if (FD_ISSET(l_socket, &read_set)) {
+		int client_id = findemptyuser(clients);
+		if (client_id != -1) {
+			clientaddrlen = sizeof(clientaddr);
+			memset(&clientaddr, 0, clientaddrlen);
+			clients[client_id]->SetSocket(accept(l_socket, (struct sockaddr*)&clientaddr, &clientaddrlen));
+			//c_sockets[client_id] = accept(l_socket, (struct sockaddr*)&clientaddr, &clientaddrlen);
+			printf("Connected:  %s\n", inet_ntoa(clientaddr.sin_addr));
 		}
+	}
+}
 
-		FD_SET(l_socket, &read_set);
-		if (l_socket > maxfd) {
-			maxfd = l_socket;
-		}
+void Server::SendAndRecv()
+{
+	char buffer[BUFFLEN];
 
-		select(maxfd + 1, &read_set, NULL, NULL, NULL);
+	for (int i = 0; i < MAXCLIENTS; i++) {
+		if (clients[i]->GetSocket() != -1) {
+			if (FD_ISSET(clients[i]->GetSocket(), &read_set)) {
+				memset(&buffer, 0, BUFFLEN);
+				int r_len = recv(clients[i]->GetSocket(), buffer, BUFFLEN, 0);
+				printf("Received: %s", buffer);
 
-		if (FD_ISSET(l_socket, &read_set)) {
-			int client_id = findemptyuser(c_sockets);
-			if (client_id != -1) {
-				clientaddrlen = sizeof(clientaddr);
-				memset(&clientaddr, 0, clientaddrlen);
-				c_sockets[client_id] = accept(l_socket, (struct sockaddr*)&clientaddr, &clientaddrlen);
-				printf("Connected:  %s\n", inet_ntoa(clientaddr.sin_addr));
-			}
-		}
-		for (i = 0; i < MAXCLIENTS; i++) {
-			if (c_sockets[i] != -1) {
-				if (FD_ISSET(c_sockets[i], &read_set)) {
-					memset(&buffer, 0, BUFFLEN);
-					int r_len = recv(c_sockets[i], buffer, BUFFLEN, 0);
-
-					int j;
-					for (j = 0; j < MAXCLIENTS; j++) {
-						if (c_sockets[j] != -1) {
-							int w_len = send(c_sockets[j], buffer, r_len, 0);
-							if (w_len <= 0) {
-#ifdef _WIN32
-								closesocket(c_sockets[j]);
-#else
-								close(c_sockets[j]);
-#endif 
-								c_sockets[j] = -1;
-							}
+				for (int j = 0; j < MAXCLIENTS; j++) {
+					if (clients[j]->GetSocket() != -1) {
+						int w_len = send(clients[j]->GetSocket(), buffer, r_len, 0);
+						if (w_len <= 0) {
+		#ifdef _WIN32
+							closesocket(clients[j]->GetSocket());
+		#else
+							close(players[j]->GetSocket());
+		#endif 
+							clients[j]->SetSocket(-1);
 						}
 					}
 				}
 			}
 		}
 	}
+}
+
+
+void Server::Send(char buffer[])
+{
+
+	for (int i = 0; i < MAXCLIENTS; i++) {
+		if (clients[i]->GetSocket() != -1) {
+			if (FD_ISSET(clients[i]->GetSocket(), &read_set)) {
+				for (int j = 0; j < MAXCLIENTS; j++) {
+					if (clients[j]->GetSocket() != -1) {
+						int w_len = send(clients[j]->GetSocket(), buffer, strlen(buffer), 0);
+						if (w_len <= 0) {
+#ifdef _WIN32
+							closesocket(clients[j]->GetSocket());
+#else
+							close(players[j]->GetSocket());
+#endif 
+							clients[j]->SetSocket(-1);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void Server::Receive()
+{
+	char buffer[BUFFLEN];
+
+	for (int i = 0; i < MAXCLIENTS; i++) {
+		if (clients[i]->GetSocket() != -1) {
+			if (FD_ISSET(clients[i]->GetSocket(), &read_set)) {
+				memset(&buffer, 0, BUFFLEN);
+				int r_len = recv(clients[i]->GetSocket(), buffer, BUFFLEN, 0);
+				clients[i]->Act(buffer);
+			}
+		}
+	}
+	memset(&buffer, 0, BUFFLEN);
+}
+
+
+
+void Server::Init()
+{
+	DoStuff();
+	CreateSocket();
+	SetServerAddress();
+	BindSocket();
+	Listen();
 }
 
 int Server::DoStuff()

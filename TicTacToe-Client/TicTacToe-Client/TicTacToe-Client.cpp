@@ -15,9 +15,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
+#include <string>
 //#include <unistd.h>
 
+
 #define BUFFLEN 1024
+
+using namespace std;
+
+string trim_right(const std::string& str)
+{
+	const std::string pattern = " \f\n\r\t\v";
+	return str.substr(0, str.find_last_not_of(pattern) + 1);
+}
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
@@ -84,26 +94,44 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	while (1) {
+	string str;
+	while (true) 
+	{
+	//	recv(s_socket, buffer, BUFFLEN, 0);
+	//	printf("Server sent: %s\n", buffer);
+
+	//	str = buffer;
+	//	str = trim_right(str);
+
+	//	memset(&buffer, 0, BUFFLEN);
+
+	//	if (str == "WAIT")		//Jei kitas pradeda, tu klausai, ka jis padarys
+	//	{
+	//		recv(s_socket, buffer, BUFFLEN, 0);
+		//	printf("Server sent: %s\n", buffer);
+			
+		//	memset(&buffer, 0, BUFFLEN);
+	//	}
+		
+		memset(&buffer, 0, BUFFLEN);
 		printf("Enter the message: ");
 		fgets(buffer, BUFFLEN, stdin);
 		/*
 		* Iðsiunèiamas praneðimas serveriui
 		*/
 		send(s_socket, buffer, strlen(buffer), 0);
+		
+		memset(&buffer, 0, BUFFLEN);
+		recv(s_socket, buffer, BUFFLEN, 0);
+		printf("Server sent: %s\n", buffer);
 
 		memset(&buffer, 0, BUFFLEN);
 		/*
 		* Praneðimas gaunamas ið serverio
 		*/
-		recv(s_socket, buffer, BUFFLEN, 0);
-		printf("Server sent: %s\n", buffer);
 
-		/*
-		* Socket'as uþdaromas
-		*/
 	}
-	std::cin.get();
+	cin.get();
 #ifdef _WIN32
 	closesocket(s_socket);
 #else

@@ -2,8 +2,8 @@
 #include "Game.h"
 #include <iostream>
 
-Game::Game(Player *player) {
-	currentPlayer = player;
+Game::Game() {
+	
 }
 
 bool Game::HasWon() {
@@ -32,4 +32,22 @@ bool Game::MakeAMove(Player *player, int location) {
 		return true;
 	}
 	return false;
+}
+
+void Game::SetCurrentPlayer(Player *player)
+{
+	currentPlayer = player;
+}
+
+Player& Game::GetCurrentPlayer()
+{
+	return *currentPlayer;
+}
+
+void Game::Begin(Server *server)
+{
+	while (true)
+	{
+		
+	}
 }

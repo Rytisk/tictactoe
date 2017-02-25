@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include "Server.h"
 #include <cstdlib>
 
 using namespace std;
@@ -11,8 +12,11 @@ private:
 					     NULL, NULL, NULL };
 	Player *currentPlayer;
 public:
-	Game(Player *player);
+	void SetCurrentPlayer(Player *player);
+	Game();
 	bool HasWon();
 	bool BoardIsFull();
 	bool MakeAMove(Player *player, int location);
+	Player &GetCurrentPlayer();
+	void Begin(Server *server);
 };
