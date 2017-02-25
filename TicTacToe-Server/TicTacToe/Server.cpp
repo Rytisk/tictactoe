@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <string.h>
+#include <string>
 #include <iostream>
 
 #define BUFFLEN 1024
@@ -25,11 +25,11 @@
 
 using namespace std;
 
-int findemptyuser(IClient *clients[])
+int findemptyuser(Player *players[])
 {
     int i;
     for (i = 0; i <  MAXCLIENTS; i++){
-        if (clients[i]->GetSocket() == -1){
+        if (players[i]->GetSocket() == -1){
             return i;
         }
     }
@@ -83,10 +83,10 @@ void Server::GetConnections()
 
 	FD_ZERO(&read_set);
 	for (int i = 0; i < MAXCLIENTS; i++) {
-		if (clients[i]->GetSocket() != -1) {
-			FD_SET(clients[i]->GetSocket(), &read_set);
-			if (clients[i]->GetSocket() > maxfd) {
-				maxfd = clients[i]->GetSocket();
+		if (players[i]->GetSocket() != -1) {
+			FD_SET(players[i]->GetSocket(), &read_set);
+			if (players[i]->GetSocket() > maxfd) {
+				maxfd = players[i]->GetSocket();
 			}
 		}
 	}
@@ -99,38 +99,38 @@ void Server::GetConnections()
 	select(maxfd + 1, &read_set, NULL, NULL, NULL);
 
 	if (FD_ISSET(l_socket, &read_set)) {
-		int client_id = findemptyuser(clients);
+		int client_id = findemptyuser(players);
 		if (client_id != -1) {
 			clientaddrlen = sizeof(clientaddr);
 			memset(&clientaddr, 0, clientaddrlen);
-			clients[client_id]->SetSocket(accept(l_socket, (struct sockaddr*)&clientaddr, &clientaddrlen));
+			players[client_id]->SetSocket(accept(l_socket, (struct sockaddr*)&clientaddr, &clientaddrlen));
 			//c_sockets[client_id] = accept(l_socket, (struct sockaddr*)&clientaddr, &clientaddrlen);
 			printf("Connected:  %s\n", inet_ntoa(clientaddr.sin_addr));
 		}
 	}
 }
-
+/*
 void Server::SendAndRecv()
 {
 	char buffer[BUFFLEN];
 
 	for (int i = 0; i < MAXCLIENTS; i++) {
-		if (clients[i]->GetSocket() != -1) {
-			if (FD_ISSET(clients[i]->GetSocket(), &read_set)) {
+		if (players[i]->GetSocket() != -1) {
+			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
 				memset(&buffer, 0, BUFFLEN);
-				int r_len = recv(clients[i]->GetSocket(), buffer, BUFFLEN, 0);
+				int r_len = recv(players[i]->GetSocket(), buffer, BUFFLEN, 0);
 				printf("Received: %s", buffer);
 
 				for (int j = 0; j < MAXCLIENTS; j++) {
-					if (clients[j]->GetSocket() != -1) {
-						int w_len = send(clients[j]->GetSocket(), buffer, r_len, 0);
+					if (players[j]->GetSocket() != -1) {
+						int w_len = send(players[j]->GetSocket(), buffer, r_len, 0);
 						if (w_len <= 0) {
 		#ifdef _WIN32
-							closesocket(clients[j]->GetSocket());
+							closesocket(players[j]->GetSocket());
 		#else
 							close(players[j]->GetSocket());
 		#endif 
-							clients[j]->SetSocket(-1);
+							players[j]->SetSocket(-1);
 						}
 					}
 				}
@@ -138,46 +138,52 @@ void Server::SendAndRecv()
 		}
 	}
 }
-
+*/
 
 void Server::Send(char buffer[])
 {
 
 	for (int i = 0; i < MAXCLIENTS; i++) {
-		if (clients[i]->GetSocket() != -1) {
-			if (FD_ISSET(clients[i]->GetSocket(), &read_set)) {
-				for (int j = 0; j < MAXCLIENTS; j++) {
-					if (clients[j]->GetSocket() != -1) {
-						int w_len = send(clients[j]->GetSocket(), buffer, strlen(buffer), 0);
+		if (players[i]->GetSocket() != -1 && players[i]->HasOpponent()) {
+			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
+				
+
+						Player *pl = &players[i]->GetOpponent();
+	
+
+						int w_len = send(pl->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
 						if (w_len <= 0) {
 #ifdef _WIN32
-							closesocket(clients[j]->GetSocket());
+							closesocket(players[i]->GetSocket());
 #else
-							close(players[j]->GetSocket());
+							close(players[i]->GetSocket());
 #endif 
-							clients[j]->SetSocket(-1);
+							players[i]->SetSocket(-1);
 						}
-					}
-				}
+
 			}
 		}
 	}
 }
+
+
+
+
 
 void Server::Receive()
 {
 	char buffer[BUFFLEN];
 
 	for (int i = 0; i < MAXCLIENTS; i++) {
-		if (clients[i]->GetSocket() != -1) {
-			if (FD_ISSET(clients[i]->GetSocket(), &read_set)) {
+		if (players[i]->GetSocket() != -1) {
+			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
 				memset(&buffer, 0, BUFFLEN);
-				int r_len = recv(clients[i]->GetSocket(), buffer, BUFFLEN, 0);
-				clients[i]->Act(buffer);
+				int r_len = recv(players[i]->GetSocket(), buffer, BUFFLEN, 0);
+				players[i]->Act(buffer);
 			}
 		}
 	}
-	memset(&buffer, 0, BUFFLEN);
+	
 }
 
 

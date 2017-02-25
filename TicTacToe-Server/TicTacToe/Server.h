@@ -11,7 +11,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #endif
-#include "IClient.h"
+#include "stdafx.h"
 
 class Server {
 private:
@@ -23,7 +23,7 @@ private:
 	
 	fd_set read_set;
 public:
-	IClient *clients[MAXCLIENTS];
+	Player *players[MAXCLIENTS];
 	Server(unsigned int _port);
 	int DoStuff();
 	int CreateSocket();
@@ -34,5 +34,6 @@ public:
 	void Receive();
 	void Init();
 	void GetConnections();
-	void SendAndRecv();
+	void SendWithAddress(Player *player, char buffer[]);
+	//void SendAndRecv();
 };

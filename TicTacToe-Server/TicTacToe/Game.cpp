@@ -44,10 +44,10 @@ Player& Game::GetCurrentPlayer()
 	return *currentPlayer;
 }
 
-void Game::Begin(Server *server)
+bool Game::IsValidMove(int location)
 {
-	while (true)
-	{
-		
-	}
+	if (location <= 8 && location >= 0 && board[location] == 0)
+		return true;
+
+	return false;
 }

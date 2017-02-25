@@ -29,7 +29,23 @@ string trim_right(const std::string& str)
 	return str.substr(0, str.find_last_not_of(pattern) + 1);
 }
 
+void PrintBoard(char board[])
+{
+	cout << board[0] << "  |  " << board[1] << "  |  " << board[2] << endl;
+	cout << "_____________" << endl;
+	cout << board[3] << "  |  " << board[4] << "  |  " << board[5] << endl;
+	cout << "_____________" << endl;
+	cout << board[6] << "  |  " << board[7] << "  |  " << board[8] << endl;
+
+}
+
+
 int main(int argc, char *argv[]) {
+
+	char board[9] = { '0', '1', '2',
+					  '3', '4', '5',
+					  '6', '7', '8' };
+
 #ifdef _WIN32
 	WSADATA data;
 #endif    
@@ -97,21 +113,23 @@ int main(int argc, char *argv[]) {
 	string str;
 	while (true) 
 	{
-	//	recv(s_socket, buffer, BUFFLEN, 0);
-	//	printf("Server sent: %s\n", buffer);
+		PrintBoard(board);
+		cout << endl;
+	/*	memset(&buffer, 0, BUFFLEN);
+		recv(s_socket, buffer, BUFFLEN, 0);
+		printf("Server sent: %s\n", buffer);
 
-	//	str = buffer;
-	//	str = trim_right(str);
+		str = buffer;
+		str = trim_right(str);
 
-	//	memset(&buffer, 0, BUFFLEN);
+		
 
-	//	if (str == "WAIT")		//Jei kitas pradeda, tu klausai, ka jis padarys
-	//	{
-	//		recv(s_socket, buffer, BUFFLEN, 0);
-		//	printf("Server sent: %s\n", buffer);
-			
-		//	memset(&buffer, 0, BUFFLEN);
-	//	}
+		if (str == "WAIT")		//Jei kitas pradeda, tu klausai, ka jis padarys
+		{
+			memset(&buffer, 0, BUFFLEN);
+			recv(s_socket, buffer, BUFFLEN, 0);
+			printf("Server sent: %s\n", buffer);
+		}*/
 		
 		memset(&buffer, 0, BUFFLEN);
 		printf("Enter the message: ");
@@ -121,9 +139,22 @@ int main(int argc, char *argv[]) {
 		*/
 		send(s_socket, buffer, strlen(buffer), 0);
 		
+		int location = atoi(buffer);
+
 		memset(&buffer, 0, BUFFLEN);
 		recv(s_socket, buffer, BUFFLEN, 0);
+
+		str = buffer;
+		str = trim_right(str);
 		printf("Server sent: %s\n", buffer);
+		cout << "||" << str << "||" << endl;
+
+		if (str != "INVALID")
+		{
+			board[location] = 'X';
+			board[stoi(str)] = 'O';
+		}
+
 
 		memset(&buffer, 0, BUFFLEN);
 		/*

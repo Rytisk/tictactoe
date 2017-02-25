@@ -1,9 +1,9 @@
 #pragma once
+
 #include "Player.h"
-#include "Server.h"
+
 #include <cstdlib>
 
-using namespace std;
 
 class Game {
 private:
@@ -18,5 +18,5 @@ public:
 	bool BoardIsFull();
 	bool MakeAMove(Player *player, int location);
 	Player &GetCurrentPlayer();
-	void Begin(Server *server);
+	bool IsValidMove(int location);
 };
