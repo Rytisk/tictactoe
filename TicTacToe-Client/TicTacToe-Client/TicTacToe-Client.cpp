@@ -110,26 +110,46 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
+
 	string str;
+
+	str = "CONN";
+	
+	send(s_socket, &str[0u], strlen(&str[0u]), 0);
+
+	
+	
+
+	
 	while (true) 
 	{
 		PrintBoard(board);
 		cout << endl;
-	/*	memset(&buffer, 0, BUFFLEN);
+		
+		memset(&buffer, 0, BUFFLEN);
 		recv(s_socket, buffer, BUFFLEN, 0);
 		printf("Server sent: %s\n", buffer);
 
 		str = buffer;
 		str = trim_right(str);
 
-		
-
 		if (str == "WAIT")		//Jei kitas pradeda, tu klausai, ka jis padarys
 		{
 			memset(&buffer, 0, BUFFLEN);
 			recv(s_socket, buffer, BUFFLEN, 0);
 			printf("Server sent: %s\n", buffer);
-		}*/
+		}
+
+		str = buffer;
+		str = trim_right(str);
+		if (str != "INVALID")
+		{
+
+			board[stoi(str)] = 'O';
+			PrintBoard(board);
+			cout << endl;
+		}
+
 		
 		memset(&buffer, 0, BUFFLEN);
 		printf("Enter the message: ");
@@ -139,21 +159,18 @@ int main(int argc, char *argv[]) {
 		*/
 		send(s_socket, buffer, strlen(buffer), 0);
 		
-		int location = atoi(buffer);
+		str = buffer;
+		int location = stoi(str.substr(4,5));
 
 		memset(&buffer, 0, BUFFLEN);
 		recv(s_socket, buffer, BUFFLEN, 0);
 
-		str = buffer;
-		str = trim_right(str);
+		
+		board[location] = 'X';
 		printf("Server sent: %s\n", buffer);
 		cout << "||" << str << "||" << endl;
 
-		if (str != "INVALID")
-		{
-			board[location] = 'X';
-			board[stoi(str)] = 'O';
-		}
+		
 
 
 		memset(&buffer, 0, BUFFLEN);

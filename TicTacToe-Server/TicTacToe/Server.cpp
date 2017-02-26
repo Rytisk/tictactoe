@@ -140,18 +140,19 @@ void Server::SendAndRecv()
 }
 */
 
-void Server::Send(char buffer[])
+void Server::Send()
 {
-
 	for (int i = 0; i < MAXCLIENTS; i++) {
 		if (players[i]->GetSocket() != -1 && players[i]->HasOpponent()) {
 			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
 				
 
 						Player *pl = &players[i]->GetOpponent();
-	
+						cout << "Send to opponent: " << players[i]->message << endl;
 
 						int w_len = send(pl->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
+						players[i]->message = "WAIT";
+						int w2_len = send(players[i]->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
 						if (w_len <= 0) {
 #ifdef _WIN32
 							closesocket(players[i]->GetSocket());

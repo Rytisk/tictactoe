@@ -77,6 +77,8 @@ int main()
 
 				player->SetGame(game);
 				server->players[i]->SetGame(game);
+				player->message = "START";
+				server->players[i]->message = "WAIT";
 				cout << "players have opponents now" << endl;
 				break;
 			}
@@ -92,7 +94,7 @@ int main()
 		//	if (server->players[i]->GetSocket() != -1 && server->players[i]->HasOpponent())
 		//	{
 				
-		server->Send("a");
+		server->Send();
 				//server->SendWithAddress(&server->players[i]->GetOpponent(), a);
 			
 			
