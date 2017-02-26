@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 	
 	send(s_socket, &str[0u], strlen(&str[0u]), 0);
 
-	
+	string qu = "QUIT";
 	
 
 	
@@ -138,14 +138,33 @@ int main(int argc, char *argv[]) {
 			memset(&buffer, 0, BUFFLEN);
 			recv(s_socket, buffer, BUFFLEN, 0);
 			printf("Server sent: %s\n", buffer);
+			str = buffer;
+			str = trim_right(str);
 		}
-
-		str = buffer;
-		str = trim_right(str);
-		if (str != "INVALID")
+		
+		if (str == "WIN")
+		{
+			cout << "You won" << endl;
+			send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
+			break;
+		}
+		else if (str == "LOSE")
+		{
+			cout << "You lost" << endl;
+			send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
+			break;
+		}
+		if (str == "TIE")
+		{
+			cout << "It's a tie" << endl;
+			send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
+			break;
+		}
+		
+		if (str.substr(0,4) == "MOVE")
 		{
 
-			board[stoi(str)] = 'O';
+			board[stoi(str.substr(4,5))] = 'O';
 			PrintBoard(board);
 			cout << endl;
 		}

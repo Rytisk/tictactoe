@@ -26,9 +26,8 @@ bool Game::BoardIsFull() {
 }
 
 bool Game::MakeAMove(Player *player, int location) {
-	if (player == currentPlayer && board[location] == NULL) {
-		board[location] = currentPlayer;
-		currentPlayer = &currentPlayer->GetOpponent();
+	if (board[location] == NULL) {
+		board[location] = player;
 		return true;
 	}
 	return false;

@@ -28,8 +28,11 @@ void Player::SetIsWaiting(bool value)
 
 void Player::SetOpponent(Player *player) 
 {
-	opponent = player;
-	hasOpponent = true;
+	opponent = player;	
+	if (player == NULL)
+		hasOpponent = false;
+	else
+		hasOpponent = true;
 }
 
 int Player::GetSocket()
@@ -56,6 +59,7 @@ void Player::Act(char buffer[])
 {
 	string msg = buffer;
 
+
 	if (msg.substr(0,4) == "MOVE")
 	{
 		int location = stoi(msg.substr(4,5));
@@ -64,7 +68,17 @@ void Player::Act(char buffer[])
 		{
 			game->MakeAMove(this, location);
 			//send about valid move
-			message = to_string(location);
+			message = "MOVE" + to_string(location);
+			if (game->HasWon())
+			{
+				message = "WIN";
+				opponent->message = "LOSE";
+			}
+			else if (game->BoardIsFull())
+			{
+				message = "TIE";
+				opponent->message = "TIE";
+			}
 		}
 		else
 		{
@@ -73,7 +87,11 @@ void Player::Act(char buffer[])
 	}
 	else if (msg == "QUIT")
 	{
-		return;
+		isWaiting = true;
+	}
+	else if (msg == "CONN")
+	{
+		message = "WAIT";
 	}
 	else
 	{

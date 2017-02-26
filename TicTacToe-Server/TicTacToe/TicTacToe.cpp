@@ -42,6 +42,8 @@ int main()
 
 	game->Begin(server);*/
 
+	
+
 	for (int i = 0; i < MAXCLIENTS; i++) {
 		server->players[i] = new Player();
 		server->players[i]->SetSocket(-1);
@@ -50,7 +52,6 @@ int main()
 
 	while(true)
 	{
-
 		server->GetConnections();
 
 		//Kai klientas prisijungia nusiunciam jam:WAIT
@@ -86,20 +87,41 @@ int main()
 		
 		player = NULL;
 		//server->SendAndRecv();
-
 		server->Receive();
 
-
+		
+		
 	//	for (int i = 0; i < MAXCLIENTS; i++) {
 		//	if (server->players[i]->GetSocket() != -1 && server->players[i]->HasOpponent())
 		//	{
-				
 		server->Send();
 				//server->SendWithAddress(&server->players[i]->GetOpponent(), a);
 			
 			
 	//	}
-
+		/*
+		for (int i = 0; i < MAXCLIENTS; i++) {
+			if(server->players[i]->HasOpponent())
+			{
+				Player *pl = &server->players[i]->GetOpponent();
+				if (server->players[i]->IsWaiting() && pl->IsWaiting())
+				{
+					for (int j = i+1; j < MAXCLIENTS; j++) {
+						if (pl == server->players[j])
+						{
+							server->CloseClientSocket(server->players[i]);
+							server->CloseClientSocket(server->players[j]);
+							server->players[i]->SetOpponent(NULL);
+							server->players[j]->SetOpponent(NULL);
+							server->players[i] = new Player();
+							server->players[j] = new Player();
+							break;
+						}
+					}
+					
+				}
+			}
+		}*/
 		
 
 	}
