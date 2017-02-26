@@ -1,7 +1,5 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (TicTacToe.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Server.cpp
-  Player.cpp
-  Generating Code...
 e:\projects\tictactoe\tictactoe-server\tictactoe\server.cpp(51): warning C4715: 'Server::CreateSocket': not all control paths return a value
 e:\projects\tictactoe\tictactoe-server\tictactoe\server.cpp(68): warning C4715: 'Server::BindSocket': not all control paths return a value
 e:\projects\tictactoe\tictactoe-server\tictactoe\server.cpp(77): warning C4715: 'Server::Listen': not all control paths return a value

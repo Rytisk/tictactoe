@@ -30,7 +30,7 @@ public:
 	void SetServerAddress();
 	int BindSocket();
 	int Listen();
-	void Send(char buffer[]);
+	void Send();
 	void Receive();
 	void Init();
 	void GetConnections();
