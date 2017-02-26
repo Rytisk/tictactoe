@@ -23,6 +23,7 @@ private:
 	
 	fd_set read_set;
 public:
+	void CloseClientSocket(Player *player);
 	Player *players[MAXCLIENTS];
 	Server(unsigned int _port);
 	int DoStuff();
