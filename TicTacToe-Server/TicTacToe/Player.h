@@ -25,6 +25,7 @@ public:
 	void SetOpponent(Player *player);
 	Player();
 	void Act(char message[]);
+	void Wait(char message[]);
 	bool HasOpponent();
 	bool IsWaiting();
 	void SetIsWaiting(bool value);

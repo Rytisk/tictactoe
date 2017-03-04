@@ -109,7 +109,7 @@ void Server::GetConnections()
 		}
 	}
 }
-/*
+
 void Server::SendAndRecv()
 {
 	char buffer[BUFFLEN];
@@ -119,50 +119,98 @@ void Server::SendAndRecv()
 			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
 				memset(&buffer, 0, BUFFLEN);
 				int r_len = recv(players[i]->GetSocket(), buffer, BUFFLEN, 0);
-				printf("Received: %s", buffer);
+			//	printf("Received: %s", buffer);
+		
+				
 
-				for (int j = 0; j < MAXCLIENTS; j++) {
-					if (players[j]->GetSocket() != -1) {
-						int w_len = send(players[j]->GetSocket(), buffer, r_len, 0);
-						if (w_len <= 0) {
-		#ifdef _WIN32
-							closesocket(players[j]->GetSocket());
-		#else
-							close(players[j]->GetSocket());
-		#endif 
-							players[j]->SetSocket(-1);
-						}
+				if (players[i]->GetSocket() != -1) {
+					int w_len = send(players[i]->GetSocket(), buffer, r_len, 0);
+
+					if (w_len <= 0) {
+	#ifdef _WIN32
+						closesocket(players[i]->GetSocket());
+	#else
+						close(players[j]->GetSocket());
+	#endif 
+						players[i]->SetSocket(-1);
 					}
 				}
 			}
 		}
 	}
 }
-*/
+
+
 
 void Server::Send()
 {
 	for (int i = 0; i < MAXCLIENTS; i++) {
-		if (players[i]->GetSocket() != -1 && players[i]->HasOpponent()) {
+		if (players[i]->GetSocket() != -1 && (players[i]->HasOpponent())) {
 			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
-				
 
-						Player *pl = &players[i]->GetOpponent();
+				/*int w2_len;
+				if (players[i]->IsWaiting())
+				{
+					cout << "is waiting" << endl;
+					w2_len = send(players[i]->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
+			
+				}
+				else
+				{*/
+					Player *pl = &players[i]->GetOpponent();
 
-						int w_len = send(pl->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
-						int w2_len = send(players[i]->GetSocket(), &(pl->message)[0u], strlen(&(players[i]->message)[0u]), 0);
-						if (w_len <= 0) {
+					int w_len = send(pl->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
+					int w2_len = send(players[i]->GetSocket(), &(pl->message)[0u], strlen(&(pl->message)[0u]), 0);
+
+					if (w_len <= 0) {
 #ifdef _WIN32
-							closesocket(players[i]->GetSocket());
+						closesocket(pl->GetSocket());
 #else
-							close(players[i]->GetSocket());
-#endif 
-							players[i] = new Player();
-							players[i]->SetSocket(-1);
-						}
+						close(players[i]->GetSocket());
+#endif			
+						//delete(pl);
+						pl = new Player();
+						pl->SetSocket(-1);
+					}
+				//}
+
+				
+				
+				
+				if (w2_len <= 0) {
+#ifdef _WIN32
+					closesocket(players[i]->GetSocket());
+#else
+					close(players[i]->GetSocket());
+#endif		
+				//	delete(players[i]);
+					players[i] = new Player();
+					players[i]->SetSocket(-1);
+				}
 
 			}
+
 		}
+//		if (players[i]->GetSocket() != -1 && players[i]->IsWaiting())
+//		{
+//			cout << "In" << endl;
+//			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
+//				cout << "sent: " << players[i]->message << endl;
+//				int w_len = send(players[i]->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
+//
+//				
+//				if (w_len <= 0) {
+//#ifdef _WIN32
+//					closesocket(players[i]->GetSocket());
+//#else
+//					close(players[i]->GetSocket());
+//#endif		
+//					//	delete(players[i]);
+//					players[i] = new Player();
+//					players[i]->SetSocket(-1);
+//				}
+//			}
+//		}
 	}
 }
 
@@ -189,8 +237,10 @@ void Server::Receive()
 			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
 				memset(&buffer, 0, BUFFLEN);
 				int r_len = recv(players[i]->GetSocket(), buffer, BUFFLEN, 0);
-				if(players[i]->HasOpponent())
+				if (players[i]->HasOpponent())
 					players[i]->Act(buffer);
+			//	else
+				//	players[i]->Wait(buffer);
 			}
 		}
 	}

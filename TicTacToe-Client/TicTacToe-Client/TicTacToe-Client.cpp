@@ -23,6 +23,8 @@
 
 using namespace std;
 
+int s_socket;
+
 string trim_right(const std::string& str)
 {
 	const std::string pattern = " \f\n\r\t\v";
@@ -39,8 +41,29 @@ void PrintBoard(char board[])
 
 }
 
+void CloseConnection(int s_socket)
+{
+	#ifdef _WIN32
+		closesocket(s_socket);
+	#else
+		close(s_socket);
+	#endif 
+}
+
+BOOL ctrl_handler(DWORD event)
+{
+	string qu = "QUIT";
+	if (event == CTRL_CLOSE_EVENT) {
+		send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
+		return true;
+	}
+	return false;
+}
+
 
 int main(int argc, char *argv[]) {
+
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)(ctrl_handler), TRUE);
 
 	char board[9] = { '0', '1', '2',
 					  '3', '4', '5',
@@ -50,7 +73,7 @@ int main(int argc, char *argv[]) {
 	WSADATA data;
 #endif    
 	unsigned int port;
-	int s_socket;
+	
 	struct sockaddr_in servaddr; // Serverio adreso struktûra
 
 	char buffer[BUFFLEN];
@@ -117,6 +140,8 @@ int main(int argc, char *argv[]) {
 	
 	send(s_socket, &str[0u], strlen(&str[0u]), 0);
 
+	string ex = "EXIT";
+
 	string qu = "QUIT";
 	
 
@@ -126,6 +151,7 @@ int main(int argc, char *argv[]) {
 		PrintBoard(board);
 		cout << endl;
 		
+
 		memset(&buffer, 0, BUFFLEN);
 		recv(s_socket, buffer, BUFFLEN, 0);
 		printf("Server sent: %s\n", buffer);
@@ -141,22 +167,31 @@ int main(int argc, char *argv[]) {
 			str = buffer;
 			str = trim_right(str);
 		}
+
+		
 		
 		if (str == "WIN")
 		{
 			cout << "You won" << endl;
-			send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
+			send(s_socket, &ex[0u], strlen(&ex[0u]), 0);
 			break;
 		}
 		else if (str == "LOSE")
 		{
 			cout << "You lost" << endl;
-			send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
+			send(s_socket, &ex[0u], strlen(&ex[0u]), 0);
 			break;
 		}
-		if (str == "TIE")
+		else if (str == "TIE")
 		{
 			cout << "It's a tie" << endl;
+			send(s_socket, &ex[0u], strlen(&ex[0u]), 0);
+			break;
+		}
+		
+		if (str == "QUIT")
+		{
+			cout << "Opponent has quit" << endl;
 			send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
 			break;
 		}
@@ -176,9 +211,22 @@ int main(int argc, char *argv[]) {
 		/*
 		* Iðsiunèiamas praneðimas serveriui
 		*/
-		send(s_socket, buffer, strlen(buffer), 0);
 		
+
+		
+		
+
 		str = buffer;
+		str = trim_right(str);
+		
+		if (str == "QUIT")
+		{
+			send(s_socket, &qu[0u], strlen(&qu[0u]), 0);
+			break;
+		}
+		
+		send(s_socket, buffer, strlen(buffer), 0);
+
 		int location = stoi(str.substr(4,5));
 
 		memset(&buffer, 0, BUFFLEN);
@@ -199,10 +247,6 @@ int main(int argc, char *argv[]) {
 
 	}
 	cin.get();
-#ifdef _WIN32
-	closesocket(s_socket);
-#else
-	close(s_socket);
-#endif 
+	CloseConnection(s_socket);
 	return 0;
 }

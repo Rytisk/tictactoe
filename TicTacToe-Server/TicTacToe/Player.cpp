@@ -58,8 +58,7 @@ bool Player::HasOpponent()
 void Player::Act(char buffer[])
 {
 	string msg = buffer;
-
-
+	
 	if (msg.substr(0,4) == "MOVE")
 	{
 		int location = stoi(msg.substr(4,5));
@@ -69,10 +68,11 @@ void Player::Act(char buffer[])
 			game->MakeAMove(this, location);
 			//send about valid move
 			message = "MOVE" + to_string(location);
+			opponent->message = "WAIT";
 			if (game->HasWon())
 			{
-				message = "WIN";
-				opponent->message = "LOSE";
+				message = "LOSE";
+				opponent->message = "WIN";
 			}
 			else if (game->BoardIsFull())
 			{
@@ -85,16 +85,33 @@ void Player::Act(char buffer[])
 			message = "INVALID";
 		}
 	}
-	else if (msg == "QUIT")
+	else if (msg.substr(0,4) == "EXIT")
 	{
-		isWaiting = true;
+		
 	}
-	else if (msg == "CONN")
+	else if (msg.substr(0, 4) == "QUIT")
 	{
-		message = "WAIT";
+		message = "QUIT";
+	}
+	else if (msg.substr(0,4) == "CONN")
+	{
+		message = "START";
+		opponent->message = "WAIT";
 	}
 	else
 	{
 		message = "INVALID";
+	}
+}
+
+void Player::Wait(char buffer[])
+{
+	string msg = buffer;
+
+	if (msg.substr(0, 4) == "QUIT")
+	{
+		isWaiting = true;
+		message = "QUIT";
+		
 	}
 }

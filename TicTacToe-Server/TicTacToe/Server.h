@@ -36,5 +36,5 @@ public:
 	void Init();
 	void GetConnections();
 	void SendWithAddress(Player *player, char buffer[]);
-	//void SendAndRecv();
+	void SendAndRecv();
 };
