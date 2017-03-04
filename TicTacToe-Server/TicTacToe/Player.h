@@ -19,6 +19,7 @@ private:
 	
 public:
 	string message;
+	bool isInvalid;
 	int GetSocket();
 	void SetSocket(int socket);
 	Player& GetOpponent();

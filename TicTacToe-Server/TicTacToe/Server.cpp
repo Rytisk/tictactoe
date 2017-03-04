@@ -119,21 +119,55 @@ void Server::SendAndRecv()
 			if (FD_ISSET(players[i]->GetSocket(), &read_set)) {
 				memset(&buffer, 0, BUFFLEN);
 				int r_len = recv(players[i]->GetSocket(), buffer, BUFFLEN, 0);
-			//	printf("Received: %s", buffer);
-		
 				
+				cout << "RECEIVED: " << buffer << " | FROM: " << players[i] << endl;
 
-				if (players[i]->GetSocket() != -1) {
-					int w_len = send(players[i]->GetSocket(), buffer, r_len, 0);
+				if (!players[i]->HasOpponent())
+					players[i]->Wait(buffer);
+
+				if (players[i]->IsWaiting())
+				{
+#ifdef _WIN32
+					closesocket(players[i]->GetSocket());
+#else
+					close(players[i]->GetSocket());
+#endif 
+
+
+					players[i] = new Player();
+					players[i]->SetSocket(-1);
+				}
+
+				else if (players[i]->HasOpponent() && !players[i]->isInvalid)
+				{
+					cout << "Player sends: "  << players[i] << endl;
+					players[i]->Act(buffer);
+
+
+					int w_len;
+
+					
+
+					Player *pl = &players[i]->GetOpponent();
+
+					cout << "SERVER: " << players[i]->message << endl;
+
+					w_len = send(pl->GetSocket(), &(players[i]->message)[0u], strlen(&(players[i]->message)[0u]), 0);
+
 
 					if (w_len <= 0) {
-	#ifdef _WIN32
+#ifdef _WIN32
 						closesocket(players[i]->GetSocket());
-	#else
-						close(players[j]->GetSocket());
-	#endif 
+#else
+						close(players[i]->GetSocket());
+#endif 
+						
+
+						players[i] = new Player();
 						players[i]->SetSocket(-1);
 					}
+
+
 				}
 			}
 		}

@@ -2,11 +2,11 @@
 e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(57): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(102): warning C4244: '=': conversion from 'SOCKET' to 'int', possible loss of data
 e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(141): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(176): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(182): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(188): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(195): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(224): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(228): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(178): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(184): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(190): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(197): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(226): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+e:\projects\tictactoe\tictactoe-client\tictactoe-client\tictactoe-client.cpp(230): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   TicTacToe-Client.vcxproj -> E:\Projects\tictactoe\TicTacToe-Client\x64\Debug\TicTacToe-Client.exe
   TicTacToe-Client.vcxproj -> E:\Projects\tictactoe\TicTacToe-Client\x64\Debug\TicTacToe-Client.pdb (Full PDB)

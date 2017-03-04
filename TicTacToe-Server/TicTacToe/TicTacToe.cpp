@@ -66,26 +66,18 @@ int main()
 
 					server->players[index]->SetGame(game);
 					server->players[i]->SetGame(game);
+
+					server->players[index]->message = "START";
+					server->players[i]->message = "WAIT";
+
 					cout << "players have opponents now" << endl;
 					break;
 				}
 			}
 		}
-		
-		
-		
-		server->Receive();
 
-
-		server->Send();
-
-		
-
+		server->SendAndRecv();
 	}
-
-	
-	 
-	
 
 	return 0;
 }

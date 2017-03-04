@@ -144,6 +144,8 @@ int main(int argc, char *argv[]) {
 
 	string qu = "QUIT";
 	
+	//Server sent acknowledgment
+	//recv(s_socket, buffer, BUFFLEN, 0);
 
 	
 	while (true) 
@@ -230,17 +232,17 @@ int main(int argc, char *argv[]) {
 		int location = stoi(str.substr(4,5));
 
 		memset(&buffer, 0, BUFFLEN);
-		recv(s_socket, buffer, BUFFLEN, 0);
+	//	recv(s_socket, buffer, BUFFLEN, 0);
 
 		
 		board[location] = 'X';
-		printf("Server sent: %s\n", buffer);
-		cout << "||" << str << "||" << endl;
+	//	printf("Server sent: %s\n", buffer);
+//		cout << "||" << str << "||" << endl;
 
 		
 
 
-		memset(&buffer, 0, BUFFLEN);
+//		memset(&buffer, 0, BUFFLEN);
 		/*
 		* Praneðimas gaunamas ið serverio
 		*/

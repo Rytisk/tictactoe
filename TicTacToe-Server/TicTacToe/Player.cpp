@@ -9,6 +9,7 @@ using namespace std;
 Player::Player() {
 	hasOpponent = false;
 	isWaiting = false;
+	isInvalid = false;
 }
 
 Player& Player::GetOpponent() 
@@ -87,11 +88,15 @@ void Player::Act(char buffer[])
 	}
 	else if (msg.substr(0,4) == "EXIT")
 	{
-		
+		opponent->SetIsWaiting(true);
+		isWaiting = true;
 	}
 	else if (msg.substr(0, 4) == "QUIT")
 	{
 		message = "QUIT";
+		opponent->SetIsWaiting(true);
+		isWaiting = true;
+		isInvalid = true;
 	}
 	else if (msg.substr(0,4) == "CONN")
 	{
@@ -100,7 +105,7 @@ void Player::Act(char buffer[])
 	}
 	else
 	{
-		message = "INVALID";
+		isInvalid = true;
 	}
 }
 
@@ -111,7 +116,6 @@ void Player::Wait(char buffer[])
 	if (msg.substr(0, 4) == "QUIT")
 	{
 		isWaiting = true;
-		message = "QUIT";
 		
 	}
 }
