@@ -16,7 +16,6 @@ private:
 	int socket;
 	bool hasOpponent;
 	bool isWaiting;
-	
 public:
 	string message;
 	bool isInvalid;

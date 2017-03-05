@@ -60,14 +60,16 @@ void Player::Act(char buffer[])
 {
 	string msg = buffer;
 	
-	if (msg.substr(0,4) == "MOVE")
+	char num = msg.at(0);
+	if (num <= '9' && num >= '0')
+//	if (msg.substr(0,4) == "MOVE")
 	{
-		int location = stoi(msg.substr(4,5));
-		cout << "Move to: " << location << endl;
+//		int location = stoi(msg.substr(4,5));
+		int location = num - '0';
+
 		if (game->IsValidMove(location))
 		{
 			game->MakeAMove(this, location);
-			//send about valid move
 			message = "MOVE" + to_string(location);
 			opponent->message = "WAIT";
 			if (game->HasWon())

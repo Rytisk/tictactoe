@@ -20,21 +20,18 @@ private:
 	struct sockaddr_in servaddr;
 	struct sockaddr_in clientaddr;
 	int c_sockets[MAXCLIENTS];
-	
 	fd_set read_set;
-public:
-	void CloseClientSocket(Player *player);
-	Player *players[MAXCLIENTS];
-	Server(unsigned int _port);
-	int DoStuff();
+	int FindEmptyUser();
+	void CloseSocket(int index);
 	int CreateSocket();
 	void SetServerAddress();
 	int BindSocket();
 	int Listen();
+public:
+	Player *players[MAXCLIENTS] = { NULL };
+	Server(unsigned int _port);
 	void Send();
-	void Receive();
-	void Init();
+	int Init();
 	void GetConnections();
-	void SendWithAddress(Player *player, char buffer[]);
 	void SendAndRecv();
 };

@@ -20,61 +20,71 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
-//#include <unistd.h>
 
 using namespace std;
 
-int main()
-{
-	Server *server = new Server(8001);
-	server->Init();
+Server *server;
 
+BOOL ctrl_handler(DWORD event)
+{
+
+	if (event == CTRL_CLOSE_EVENT) {
+		for (int i = 0; i < MAXCLIENTS; i++) {
+			if (server->players[i] != NULL)
+			{
+				server->players[i]->message = "EXIT";
+			}
+		}
+		server->Send();
+		return true;
+	}
+	return false;
+}
+
+void SetOpponents()
+{
+	int index = -1;
 
 	for (int i = 0; i < MAXCLIENTS; i++) {
-		server->players[i] = new Player();
-		server->players[i]->SetSocket(-1);
+		if ((server->players[i]->GetSocket() != -1) && !(server->players[i]->HasOpponent()))
+		{
+			index = i;
+			break;
+		}
 	}
 
+	if (index != -1)
+	{
+		for (int i = 0; i < MAXCLIENTS; i++) {
+			if ((server->players[i]->GetSocket() != -1) && (!server->players[i]->HasOpponent()) && (i != index))
+			{
+				server->players[index]->SetOpponent(server->players[i]);
+				server->players[i]->SetOpponent(server->players[index]);
+
+				Game *game = new Game();
+
+				server->players[index]->SetGame(game);
+				server->players[i]->SetGame(game);
+
+				cout << "Players have opponents now" << endl;
+				break;
+			}
+		}
+	}
+}
+
+int main()
+{
+	server = new Server(8001);
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)(ctrl_handler), TRUE);
+
+	server->Init();
 
 	while(true)
 	{
 		server->GetConnections();
 
-		//Kai klientas prisijungia nusiunciam jam:WAIT
-		//ir laukiam kol pasijungs antras vartotojas, tada jiem abiem nustatysim setOpponent() viena su kitu
-		//tada vienam nusius wait, kitam start
-
-		int index = -1;
-
-		for (int i = 0; i < MAXCLIENTS; i++) {
-			if ((server->players[i]->GetSocket() != -1) && !(server->players[i]->HasOpponent()))
-			{
-				index = i;
-				break;
-			}
-		}
-
-		if (index != -1)
-		{
-			for (int i = 0; i < MAXCLIENTS; i++) {
-				if ((server->players[i]->GetSocket() != -1) && (!server->players[i]->HasOpponent()) && (i != index))
-				{
-					server->players[index]->SetOpponent(server->players[i]);
-					server->players[i]->SetOpponent(server->players[index]);
-
-					Game *game = new Game();
-
-					server->players[index]->SetGame(game);
-					server->players[i]->SetGame(game);
-
-					server->players[index]->message = "START";
-					server->players[i]->message = "WAIT";
-
-					cout << "players have opponents now" << endl;
-					break;
-				}
-			}
-		}
+		SetOpponents();
 
 		server->SendAndRecv();
 	}
