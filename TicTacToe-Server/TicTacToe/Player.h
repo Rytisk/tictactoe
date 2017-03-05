@@ -19,12 +19,14 @@ private:
 	
 public:
 	string message;
+	bool isInvalid;
 	int GetSocket();
 	void SetSocket(int socket);
 	Player& GetOpponent();
 	void SetOpponent(Player *player);
 	Player();
 	void Act(char message[]);
+	void Wait(char message[]);
 	bool HasOpponent();
 	bool IsWaiting();
 	void SetIsWaiting(bool value);
